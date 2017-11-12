@@ -1,0 +1,4 @@
+.DS_Store
+auth/*.*
+tracks.txt
+data.conf
