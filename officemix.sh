@@ -42,6 +42,28 @@ clean() {
   rm -rf $1
 }
 
+clearplaylist() {
+  source "data.conf"
+  for file in "$1/*" 
+  do
+    oauth2 $file
+    break 1
+  done
+
+  snapshot=$(curl -X GET "https://api.spotify.com/v1/users/$user/playlists/$playlist" -H "Authorization: Bearer $token" | jq -r '.snapshot_id')
+
+  position='['
+  for (( c=0; c<$2; c++ ))
+  do  
+     position="$position$c,"
+  done
+  position="${position%?}]"
+  
+  delete=$(curl -X DELETE "https://api.spotify.com/v1/users/$user/playlists/$playlist/tracks" -H "Authorization: Bearer $token" -H "Content-Type: application/json" --data "{\"positions\":$position,\"snapshot_id\":\"$snapshot\"}")
+
+  echo delete
+}
+
 folder="auth"
 mkdir -p auth
 
@@ -59,16 +81,18 @@ then
   fi
 else
   if [ $# -eq 0 ]
-  then 
-    tracksfile='tracks.txt'
+  then
     maxsongs=50
+    clearplaylist $folder $maxsongs
+    tracksfile='tracks.txt'
     usercount=$(ls -d auth/*oauth* | wc -l)
+
     if [ $usercount -ne 0 ]
     then
       limit=$((maxsongs / usercount))
-
       FILES=auth/*
       > $tracksfile
+
       for f in "$folder/*"
       do
         authfile=$(basename "$f")
@@ -77,6 +101,7 @@ else
         toptracks $token $limit $tracksfile
         addtoplaylist $token $tracksfile
       done
+
       clean $tracksfile
     fi
   fi
