@@ -14,8 +14,8 @@ Create a playlist with the most heard tracks of your co-workers, friends, etc.
 2. You will need to register a new Application at https://developer.spotify.com/my-applications
 3. Take note of the Client ID and Client Secret
 4. For the 'Redirect URI' you will need to use http://localhost:8082/ (or any other port)
-5. Create a new file `data.conf` and replace `id` and `secret` with the values from Steps 1
-
+5. Create a new file `data.conf` and replace `id` and `secret` with the values from Steps 3
+6. get the user id and the playlist of the target playlist and replace the values in `user` and `playlist`
 ```
 id="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 secret="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
