@@ -2,9 +2,9 @@
 
 oauth2 () {
   source "data.conf"
-  b64=$(echo -ne "${id}":"${secret}" | base64 -b 0)
+  b64="YWNlZTg0MTFjZDFkNDk3MDk1MTZlOWM3ZDhhYWFiYzY6MDg4MWEwYzFjYzQwNDY4Zjk1OWMyNDljZjYyOTJjMDI="
   #If no refresh token exists, prompt the user to open a URL where they can authorize the app. If refresh token exists, exchange it for access token
-  if [ ! -e ./$1 ]
+  if [ ! -f $1 ]
   then
     redirect_uri="http%3A%2F%2F$callback%3A$port%2F"
     scopes=$(echo "playlist-modify-public playlist-modify-private user-top-read" | tr ' ' '%' | sed s/%/%20/g)
@@ -62,9 +62,9 @@ clearplaylist() {
   tmp=$total
 
   if [ "$total" -ne 0 ]
-  then  
+  then
     snapshot=$(curl -X GET "https://api.spotify.com/v1/users/$user/playlists/$playlist" -H "Authorization: Bearer $token" | jq -r '.snapshot_id')
-        
+
     while [ $tmp -gt 0 ]
     do
         count=$tmp
@@ -75,7 +75,7 @@ clearplaylist() {
         position='['
 
         for (( c=0; c<$count; c++ ))
-        do  
+        do
            position="$position$c,"
         done
         position="${position%?}]"
@@ -94,7 +94,7 @@ if [ ! -d $folder ]; then
 fi
 
 if [ $# -eq 2 ]
-then 
+then
   if [ "$1" == "-init" ]
   then
     oauth2 $mastertoken $2
@@ -103,7 +103,7 @@ then
   fi
 fi
 if [ $# -eq 3 ]
-then 
+then
   if [ "$1" == "-add" ]
   then
     oauth2 "$folder/oauth.$2" $3
@@ -113,13 +113,13 @@ then
 else
   if [ $# -eq 0 ]
   then
-    maxsongs=75
+    maxsongs=100
     clearplaylist $mastertoken $maxsongs
     tracksfile='tracks.txt'
-    > $tracksfile
 
-    for f in "$folder/*"
+    for f in $folder/*
     do
+      > $tracksfile
       authfile=$(basename "$f")
       token=''
       authuser=''

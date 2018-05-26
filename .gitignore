@@ -3,3 +3,4 @@ auth/*.*
 tracks.txt
 data.conf
 master.token
+.idea
